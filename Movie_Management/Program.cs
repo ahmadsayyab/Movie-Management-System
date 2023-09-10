@@ -12,6 +12,7 @@ namespace Movie_Management
 {
     public class Program
     {
+        
 
 
         public static void Menu()
@@ -81,11 +82,15 @@ namespace Movie_Management
         }
 
         //Hashtable stores movies data.
-        public static Hashtable moviesData = new Hashtable();    
-           
+        //public static Hashtable moviesData = new Hashtable();    
+
+        //ArrayList to store movies data
+        public static ArrayList moviesData = new ArrayList();
+
 
 
         //Function to add Movie into the Hashtable.
+        
         public static void AddMovie()
         {
 
@@ -95,6 +100,7 @@ namespace Movie_Management
 
             while(confirm)
             {
+                
                 Console.WriteLine("Enter the movie title:");
                 string title = Console.ReadLine();
 
@@ -103,40 +109,94 @@ namespace Movie_Management
                     Console.WriteLine("You missed out entering Movie Title, Please enter it!: ");
                     title = Console.ReadLine();
                 }
-
-                Console.WriteLine("Enter the movie rating (out of 10):");
-                string rating = Console.ReadLine();
-                int movie_rating;
-                while (string.IsNullOrEmpty(rating) || !int.TryParse(rating, out movie_rating) || movie_rating > 10)
+                Console.WriteLine("Enter author of the movie: ");
+                string author = Console.ReadLine();
+                int movie_author;
+                while (string.IsNullOrEmpty(author) || int.TryParse(author, out movie_author))
                 {
-                    if (string.IsNullOrEmpty(rating))
+                    if (string.IsNullOrEmpty(author))
                     {
-                        Console.WriteLine("You missed out entering Movie Rating, Please enter it!: ");
-                        rating = Console.ReadLine();
+                        Console.WriteLine("You missed out entering Author Name, Please enter it!: ");
+                        author = Console.ReadLine();
                     }
-                    else if (!int.TryParse(rating, out movie_rating))
+                    else if (int.TryParse(author, out movie_author))
                     {
-                        Console.WriteLine("Your input should be a digit in range: 1 - 10");
-                        rating = Console.ReadLine();
-                    }
-                    else if (movie_rating > 10)
-                    {
-                        Console.WriteLine("Keep your rating under 10:");
-                        rating = Console.ReadLine();
+                        Console.WriteLine("Name cannot be an integer");
+                        author = Console.ReadLine();
                     }
                     else
                     {
-                        Console.WriteLine("Invalid input");
+                        Console.WriteLine("Something went wrong");
                     }
                 }
+                int count = 0;
+                double sum = 0;
+                bool choose = true;
+                while (choose)
+                {
+                    Console.WriteLine("Enter the movie rating (out of 10):");
+                    string rating = Console.ReadLine();
+                    int movie_rating;
+                    while (string.IsNullOrEmpty(rating) || !int.TryParse(rating, out movie_rating) || movie_rating > 10)
+                    {
+                        if (string.IsNullOrEmpty(rating))
+                        {
+                            Console.WriteLine("You missed out entering Movie Rating, Please enter it!: ");
+                            rating = Console.ReadLine();
+                        }
+                        else if (!int.TryParse(rating, out movie_rating))
+                        {
+                            Console.WriteLine("Your input should be a digit in range: 1 - 10");
+                            rating = Console.ReadLine();
+                        }
+                        else if (movie_rating > 10)
+                        {
+                            Console.WriteLine("Keep your rating under 10:");
+                            rating = Console.ReadLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid input");
+                        }
+                    }
+
+                     count++;
+                    sum += double.Parse(rating);
+                    Console.WriteLine("Do you want to add another rating?, type yes");
+                    string decide = Console.ReadLine().ToLower();
+
+                    if(decide == "yes")
+                    {
+                        choose = true;
+                       
+                    }
+                    else
+                    {
+                        choose = false;
+                    }
+
+                }
+
+               
+                double avg_rating = sum / count;
+                Console.WriteLine($"The average rating of the movie {title} after {count} times of rating is: {avg_rating}");
 
 
-                moviesData.Add(title, rating);
+
+
+
+                //moviesData.Add(title, rating);
+                moviesData.Add(title);
+                //moviesData.Add(movie_rating);
+                moviesData.Add(avg_rating);
+                moviesData.Add(author);
+                
+                
 
                 Console.WriteLine("####################################################");
-                Console.WriteLine($"Movie Title: {title} & Rating: {rating} has been added Successfully!!!");
+                Console.WriteLine($"Movie Title: {title}, Movie Author: {author} & Rating: {avg_rating} has been added Successfully!!!");
                 Console.WriteLine("#####################################################");
-                Console.WriteLine("\nDo you want to add another Movie? type yes, OR any other Char to stop entering");
+                Console.WriteLine("\nDo you want to add another Movie Data? type yes, OR any other Char to stop entering");
                 string choice = Console.ReadLine().ToLower();
 
                 
@@ -153,27 +213,31 @@ namespace Movie_Management
             }
 
 
-            //Console.WriteLine("\n===Movies List===");
-            //Console.WriteLine("====Before deletion=====");
-            //foreach (var key in moviesData.Keys)
-            //{
-            //    Console.WriteLine($"Movie Name: {key} \t Movie_Rating:  {moviesData[key]}");
-            //}
+            Console.WriteLine("\n===Movies List===");
+            int itemsPerGroup = 3;
+            int itemCount = 0;
+            Console.Write("Movie Name: \tRating: \tAuthor:\n");
+            foreach (var item in moviesData)
+            {
+
+                Console.Write(item + "  \t\t");
+                itemCount++;
+
+                if (itemCount % itemsPerGroup == 0)
+                {
+                    // Start a new line after every group of three items
+                    Console.WriteLine();
+                }
+
+            }
 
         }
 
 
 
-        //Function to let user delete any specific movie
+        // //Function to let user delete any specific movie
         public static void DeleteMovie()
         {
-
-            //Console.WriteLine("\n===Movies List===");
-            //Console.WriteLine("====Before deletion=====");
-            //foreach (var key in moviesData.Keys)
-            //{
-            //    Console.WriteLine($"Movie Name: {key} \t Movie_Rating:  {moviesData[key]}");
-            //}
 
             bool confirm = true;
 
@@ -182,17 +246,19 @@ namespace Movie_Management
 
                 if (moviesData.Count != 0)
                 {
+
+
                     Console.WriteLine("Enter the movie title to delete:");
                     string title = Console.ReadLine();
 
-                    while (string.IsNullOrEmpty(title) || !moviesData.ContainsKey(title))
+                    while (string.IsNullOrEmpty(title) || !moviesData.Contains(title))
                     {
                         if (string.IsNullOrEmpty(title))
                         {
                             Console.WriteLine("You missed out entering Movie Title, Please enter it!: ");
                             title = Console.ReadLine();
                         }
-                        else if (!moviesData.ContainsKey(title))
+                        else if (!moviesData.Contains(title))
                         {
                             Console.WriteLine("The title you provided does not exist in the collection, " +
                                 "enter the correct title!!!");
@@ -207,16 +273,30 @@ namespace Movie_Management
                         }
 
                     }
-
-                    if (moviesData.ContainsKey(title))
-                    {
                         Console.WriteLine("#######################################################");
                         Console.WriteLine($"Movie_Name: {title} has been deleted Successfully!!!");
                         Console.WriteLine("#####################################################\n");
-                        moviesData.Remove(title);
+
+                    int indexToRemove = -1; 
+
+                    // Find the index of the movie title in the ArrayList
+                    for (int i = 0; i < moviesData.Count; i += 3) 
+                    {
+                        string movieTitle = (string)moviesData[i];
+
+                        if (movieTitle.Equals(title))
+                        {
+                            indexToRemove = i;
+                            break; 
+                        }
                     }
 
-
+                    if (indexToRemove != -1)
+                    {
+                        
+                        moviesData.RemoveRange(indexToRemove, 3); 
+                       
+                    }
                     else
                     {
                         Console.WriteLine("Something went wrong");
@@ -249,10 +329,23 @@ namespace Movie_Management
 
                 //Console.WriteLine("\n===Movies List===");
                 //Console.WriteLine("====After deletion=====");
-                //foreach (var key in moviesData.Keys)
-                //{
-                //    Console.WriteLine($"Movie Name: {key} \t Movie_Rating:  {moviesData[key]}");
-                //}
+
+                int itemsPerGroup = 3;
+                int itemCount = 0;
+                Console.Write("Movie Name: \tRating: \tAuthor:\n");
+                foreach (var item in moviesData)
+                {
+
+                    Console.Write(item + "  \t\t");
+                    itemCount++;
+
+                    if (itemCount % itemsPerGroup == 0)
+                    {
+                        // Start a new line after every group of three items
+                        Console.WriteLine();
+                    }
+
+                }
 
 
 
@@ -261,16 +354,10 @@ namespace Movie_Management
         }
 
 
-       //Function to allow a user to Update a movie Rating
-       public static void UpdateMovieRating()
-       {
+        ////Function to allow a user to Update a movie Rating
+        public static void UpdateMovieRating()
+        {
 
-            //Console.WriteLine("\n===Movies List===");
-            //Console.WriteLine("====Before Updating=====");
-            //foreach (var key in moviesData.Keys)
-            //{
-            //    Console.WriteLine($"Movie Name: {key} \t Movie_Rating:  {moviesData[key]}");
-            //}
             bool confirm = true;
 
             while (confirm)
@@ -281,7 +368,7 @@ namespace Movie_Management
                     Console.WriteLine("Enter the movie title:");
                     string title = Console.ReadLine();
 
-                    while (string.IsNullOrEmpty(title) || !moviesData.ContainsKey(title))
+                    while (string.IsNullOrEmpty(title) || !moviesData.Contains(title))
                     {
                         if (string.IsNullOrEmpty(title))
                         {
@@ -290,7 +377,7 @@ namespace Movie_Management
                         }
 
 
-                        else if (!moviesData.ContainsKey(title))
+                        else if (!moviesData.Contains(title))
                         {
                             Console.WriteLine("The title you provided does not exist in the collection, " +
                                 "enter the correct title!!!");
@@ -333,15 +420,31 @@ namespace Movie_Management
 
 
 
-
-                    if (moviesData.ContainsKey(title))
+                    int indexToUpdate = -1;
+                    for (int i = 0; i < moviesData.Count; i += 3)
                     {
-                        moviesData[title] = rating;
+                        string movieTitle = (string)moviesData[i];
+
+                        if (movieTitle.Equals(title))
+                        {
+                            indexToUpdate = i;
+                            break;
+                        }
+                    }
+
+                    //double new_rating = avg_rating + int.Parse(rating) / (count + 1);
+
+                    if (indexToUpdate != -1)
+                    {
+                        
+                        moviesData[indexToUpdate + 1] = rating;
+
                     }
                     else
                     {
-                        Console.WriteLine("Something wrong happend");
+                        Console.WriteLine("Something went wrong");
                     }
+
 
 
 
@@ -349,7 +452,7 @@ namespace Movie_Management
                     Console.WriteLine("Movie Rating has been updated Successfully!!!");
                     Console.WriteLine("###############################################");
 
-                    Console.WriteLine($"\nNew Rating for the Movie {title} is:  {moviesData[title]}\n");
+                    Console.WriteLine($"\nNew Rating for the Movie {title} is: {rating}\n");
 
                     Console.WriteLine("Do you want to update rating for another Movie? type yes, " +
                         "OR any other Char to stop entering");
@@ -378,25 +481,33 @@ namespace Movie_Management
             }
 
 
-           
-            //Console.WriteLine("\n===Movies List===");
-            //Console.WriteLine("====After Updating=====");
-            //foreach (var key in moviesData.Keys)
-            //{
 
+            int itemsPerGroup = 3;
+            int itemCount = 0;
+            Console.Write("Movie Name: \tRating: \tAuthor:\n");
+            foreach (var item in moviesData)
+            {
 
-            //    Console.WriteLine($"Movie Name: {key} \t Movie_Rating:  {moviesData[key]}");
-            //}
+                Console.Write(item + "  \t\t");
+                itemCount++;
+
+                if (itemCount % itemsPerGroup == 0)
+                {
+                    
+                    Console.WriteLine();
+                }
+
+            }
 
 
 
         }
 
 
-        //Function to allow the user to search for a specific movie
+        // //Function to allow the user to search for a specific movie
         public static void FindMovie()
         {
-            
+
             bool confirm = true;
 
             while (confirm)
@@ -407,7 +518,7 @@ namespace Movie_Management
                     Console.WriteLine("Enter the movie title to find if it exist:");
                     string title = Console.ReadLine();
 
-                    while (string.IsNullOrEmpty(title) || !moviesData.ContainsKey(title))
+                    while (string.IsNullOrEmpty(title) || !moviesData.Contains(title))
                     {
                         if (string.IsNullOrEmpty(title))
                         {
@@ -415,7 +526,7 @@ namespace Movie_Management
                             title = Console.ReadLine();
                         }
 
-                        else if (!moviesData.ContainsKey(title))
+                        else if (!moviesData.Contains(title))
                         {
                             Console.WriteLine("The title you provided does not exist in the collection" +
                                 "enter the correct title!!!");
@@ -423,12 +534,38 @@ namespace Movie_Management
                         }
                     }
 
-                    if (moviesData.ContainsKey(title))
+                    if (moviesData.Contains(title))
                     {
                         Console.WriteLine("##########################");
                         Console.WriteLine("Movie found Successfully!!!");
                         Console.WriteLine("##########################");
-                        Console.WriteLine($"\nMovie_Name: {title} \t Movie_Rating: {moviesData[title]}\n");
+                        
+                        int indexToShow = -1;
+                        for (int i = 0; i < moviesData.Count; i += 3)
+                        {
+                            string movieTitle = (string)moviesData[i];
+
+                            if (movieTitle.Equals(title))
+                            {
+                                indexToShow = i;
+                                break;
+                            }
+                        }
+
+                        if (indexToShow != -1)
+                        {
+
+                            
+                            Console.Write($"Movie Name: {moviesData[indexToShow]}\t" );
+                            Console.Write($"Movie Rating: {moviesData[indexToShow + 1]}\t");
+                            Console.Write($"Movie Author: {moviesData[indexToShow + 2]}\t\n");
+
+                        }
+                        else
+                        {
+                            Console.WriteLine("Something went wrong");
+                        }
+
                     }
 
                     else
@@ -461,43 +598,45 @@ namespace Movie_Management
                 }
 
 
-                //Console.WriteLine("\n===Movies List===");
-                //Console.WriteLine("====After deletion=====");
-                //foreach (var key in moviesData.Keys)
-                //{
-                //    Console.WriteLine($"Movie Name: {key} \t Movie_Rating:  {moviesData[key]}");
-                //}
-
-
 
             }
         }
 
-        //function to allow the user to see all the movies in the collection
+        // //function to allow the user to see all the movies in the collection
 
         public static void ShowAllMovies()
         {
-            if(moviesData.Count != 0)
+            if (moviesData.Count != 0)
             {
-                foreach (var key in moviesData.Keys)
+                int itemsPerGroup = 3;
+                int itemCount = 0;
+                Console.Write("Movie Name: \tRating: \tAuthor:\n");
+                foreach (var item in moviesData)
                 {
 
-                    Console.WriteLine("\n\t==== ALL Movies ====\n");
-                    Console.WriteLine($"Movie Name: {key} \t Movie_Rating:  {moviesData[key]}");
+                    Console.Write(item + "  \t\t");
+                    itemCount++;
+
+                    if (itemCount % itemsPerGroup == 0)
+                    {
+                        
+                        Console.WriteLine();
+                    }
+
                 }
-                
-               
+
+
             }
             else
             {
                 Console.WriteLine("#########################");
                 Console.WriteLine("The Collection is empty!!!");
                 Console.WriteLine("#########################");
-                
+
             }
-           
-            
-           
+
+
+
         }
         static void Main(string[] args)
         {
