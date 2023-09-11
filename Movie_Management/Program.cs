@@ -94,7 +94,8 @@ namespace Movie_Management
         public static void AddMovie()
         {
 
-            
+            double avg_rating = 0;
+            int count = 0;
 
             bool confirm = true;
 
@@ -129,7 +130,7 @@ namespace Movie_Management
                         Console.WriteLine("Something went wrong");
                     }
                 }
-                int count = 0;
+                count = 0;
                 double sum = 0;
                 bool choose = true;
                 while (choose)
@@ -178,12 +179,12 @@ namespace Movie_Management
                 }
 
                
-                double avg_rating = sum / count;
+                avg_rating = sum / count;
                 Console.WriteLine($"The average rating of the movie {title} after {count} times of rating is: {avg_rating}");
 
 
 
-
+            
 
                 //moviesData.Add(title, rating);
                 moviesData.Add(title);
@@ -231,6 +232,7 @@ namespace Movie_Management
 
             }
 
+            
         }
 
 
@@ -392,33 +394,56 @@ namespace Movie_Management
 
                     }
 
-                    Console.WriteLine("Enter the new rating (out of 10):");
-                    string rating = Console.ReadLine();
-                    int movie_rating;
-                    while (string.IsNullOrEmpty(rating) || !int.TryParse(rating, out movie_rating) || movie_rating > 10)
+                    int count = 0;
+                    double sum = 0;
+                    bool choose = true;
+                    while (choose)
                     {
-                        if (string.IsNullOrEmpty(rating))
+                        Console.WriteLine("Enter the new movie rating (out of 10):");
+                        string rating = Console.ReadLine();
+                        int movie_rating;
+                        while (string.IsNullOrEmpty(rating) || !int.TryParse(rating, out movie_rating) || movie_rating > 10)
                         {
-                            Console.WriteLine("You missed out entering Movie Rating, Please enter it!: ");
-                            rating = Console.ReadLine();
+                            if (string.IsNullOrEmpty(rating))
+                            {
+                                Console.WriteLine("You missed out entering Movie Rating, Please enter it!: ");
+                                rating = Console.ReadLine();
+                            }
+                            else if (!int.TryParse(rating, out movie_rating))
+                            {
+                                Console.WriteLine("Your input should be a digit in range: 1 - 10");
+                                rating = Console.ReadLine();
+                            }
+                            else if (movie_rating > 10)
+                            {
+                                Console.WriteLine("Keep your rating under 10:");
+                                rating = Console.ReadLine();
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid input");
+                            }
                         }
-                        else if (!int.TryParse(rating, out movie_rating))
+
+                        count++;
+                        sum += double.Parse(rating);
+                        Console.WriteLine("Do you want to add another rating?, type yes");
+                        string decide = Console.ReadLine().ToLower();
+
+                        if (decide == "yes")
                         {
-                            Console.WriteLine("Your input should be a digit in range: 1 - 10");
-                            rating = Console.ReadLine();
-                        }
-                        else if (movie_rating > 10)
-                        {
-                            Console.WriteLine("Keep your rating under 10:");
-                            rating = Console.ReadLine();
+                            choose = true;
+
                         }
                         else
                         {
-                            Console.WriteLine("Invalid input");
+                            choose = false;
                         }
+
                     }
 
 
+                    double new_avg_rating = sum / count;
 
                     int indexToUpdate = -1;
                     for (int i = 0; i < moviesData.Count; i += 3)
@@ -437,7 +462,7 @@ namespace Movie_Management
                     if (indexToUpdate != -1)
                     {
                         
-                        moviesData[indexToUpdate + 1] = rating;
+                        moviesData[indexToUpdate + 1] = new_avg_rating;
 
                     }
                     else
@@ -452,7 +477,7 @@ namespace Movie_Management
                     Console.WriteLine("Movie Rating has been updated Successfully!!!");
                     Console.WriteLine("###############################################");
 
-                    Console.WriteLine($"\nNew Rating for the Movie {title} is: {rating}\n");
+                    Console.WriteLine($"\nNew Average Rating for the Movie {title} after {count} times rating is: {new_avg_rating}\n");
 
                     Console.WriteLine("Do you want to update rating for another Movie? type yes, " +
                         "OR any other Char to stop entering");
